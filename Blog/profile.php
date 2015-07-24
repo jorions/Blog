@@ -1,11 +1,7 @@
 <?php
 include "checkLogin.php";
 include "checkDatabase.php";
-
-if(isset($_POST["submit"])) {
-    session_destroy();
-    header("location: login.php");
-}
+include "checkLogout.php";
 
 echo "Congratulations <strong>$_SESSION[user]</strong> - you made it to the home page!";
 echo "<br><br>";
