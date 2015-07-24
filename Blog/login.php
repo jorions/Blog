@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <h2>Login</h2>
 <form action="login.php" method="POST">
     Enter your username: <input type="text" name="username" value=""><br>

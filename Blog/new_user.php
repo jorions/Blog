@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <h2>Create a new account</h2>
 
 <form action="new_user.php" method="POST">
