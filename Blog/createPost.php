@@ -4,6 +4,8 @@
 include "checkLogin.php";
 include "checkDatabase.php";
 include "checkLogout.php";
+include "checkProfile.php";
+include "checkIndex.php";
 ?>
 
 <html>
@@ -43,7 +45,7 @@ if(isset($_POST["submit"])) {
     <br>
     <br>
     Enter your blog post here<br>
-    <input type="text" name="contents" value="<?php echo $_SESSION["blogContents"]; ?>" style="width: 600px; height: 400px">
+    <textarea name="contents" cols="70" rows="20"><?php echo $_SESSION["blogContents"]; ?></textarea>
     <br>
     <input type="submit" name="submit" value="Click here to submit your post">
 </form>

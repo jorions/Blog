@@ -2,7 +2,7 @@
 
 <h2>Create a new account</h2>
 
-<form action="new_user.php" method="POST">
+<form action="newUser.php" method="POST">
     Enter a username: <input type="text" name="username" value=""><br>
     Enter a password: <input type="text" name="password" value=""><br>
     <br>
@@ -12,7 +12,7 @@
 <br><br>
 
 <?php
-session_start();
+session_start(); //required here because this page does not use "include checkLogin.php";
 
 include "checkDatabase.php";
 

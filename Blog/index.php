@@ -4,6 +4,7 @@
 include "checkLogin.php";
 include "checkDatabase.php";
 include "checkLogout.php";
+include "checkProfile.php";
 ?>
 
 <html>
@@ -16,10 +17,14 @@ include "checkLogout.php";
 if(isset($_POST["createPost"])) {
     header("location: createPost.php");
 }
+
+//if post was just uploaded to this page provide message letting you know that your blog was posted
 if(isset($_SESSION["blogTitle"])) {
-    echo "<h3 style='color:blue'>Your post $_SESSION[blogTitle] was successfuly uploaded!</h3>";
-    unset($_SESSION["blogTitle"]);
-    unset($_SESSION["blogContents"]);
+    if($_SESSION["blogTitle"] != "") { //necessary because if you move from createPost to here without creating a post $_SESSION["blogTitle"] is set to ""
+        echo "<h3 style='color:blue'>Your post $_SESSION[blogTitle] was successfuly uploaded!</h3>";
+        unset($_SESSION["blogTitle"]);
+        unset($_SESSION["blogContents"]);
+    }
 }
 
 ?>
@@ -32,11 +37,13 @@ if(isset($_SESSION["blogTitle"])) {
 
 <br>
 
-<table>
+<table style="text-align: left">
     <tr>
-        <th><strong>Post Title</strong></th>
-        <th>Post Author</th>
-        <th>Post Date</th>
+        <th><strong>Title</strong></th>
+        <th>Author</th>
+        <th>Date</th>
+        <th>Post</th>
+        <th>View Post</th>
     </tr>
     <?php
     $allPosts = $db->query("SELECT * FROM posts");
@@ -46,6 +53,15 @@ if(isset($_SESSION["blogTitle"])) {
                 <td><?php echo $row["title"]; ?></td>
                 <td><?php echo $row["author"]; ?></td>
                 <td><?php echo $row["date"]; ?></td>
+                <td>
+                    <?php
+                    if(strlen($row["contents"]) > 60)
+                        echo substr($row["contents"], 0, 50) . "...";
+                    else
+                        echo $row["contents"];
+                    ?>
+                </td>
+                <td><a href="viewPost.php?id=<?php echo $row["id"]; ?>">View</a></td>
             </tr> <?php
         }
     } else {

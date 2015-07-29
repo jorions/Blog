@@ -7,13 +7,13 @@
     <br>
     <input type="submit" name="submit" value="Login" style="width: 300px"><br>
     <br><br>
-    If you dont have an account <a href="new_user">click here</a>
+    If you dont have an account <a href="newUser.php">click here</a>
 </form>
 
 <br><br>
 
 <?php
-session_start();
+session_start(); //required here because this page does not use "include checkLogin.php";
 
 include "checkDatabase.php";
 
