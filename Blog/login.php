@@ -13,15 +13,13 @@
 <br><br>
 
 <?php
-session_start(); //required here because this page does not use "include checkLogin.php";
-
 include "checkDatabase.php";
 
 if(isset($_POST["submit"])) {
     $username = $_POST["username"];
     $password = $_POST["password"];
 
-    //login error handling
+    //if username or password are blank
     if($username == "") {
         echo "<em>Please enter a username</em><br>";
     }
@@ -29,24 +27,27 @@ if(isset($_POST["submit"])) {
         echo "<em>Please enter a password</em><br>";
     }
 
-    //login (with security)
+    //if the username and password have values and no illegal characters, check login database
     if($username !="" && $password != "" && preg_match("#^[a-zA-Z0-9]+$#", $username) && preg_match("#^[a-zA-Z0-9]+$#", $password)) {
-        //check username and password
+
+        //check username and password against database
         $check = $db->prepare("SELECT * FROM user_logins WHERE username=? AND password=?");
         $check->bind_param("ss", $username, $password);
         $check->execute();
-        $check->store_result(); //stores value of executed statement
+        //stores value of executed statement and enables num_rows method to be used
+        $check->store_result();
         $rows = $check->num_rows;
+        //if there is a returned row then the password and username are correct, so login
         if($rows == 1) {
             $_SESSION["user"] = $username;
             header("location: profile.php");
+        //else if there is no returned value, then the password or username is incorrect
         } else {
-            echo "<em>Invalid username or password</em>";
+            echo "<em>Incorrect username or password</em>";
         }
+    //else if username and password are entered but contain illegal characters
     } else if ($username !="" && $password != "" && (!preg_match("#^[a-zA-Z0-9]+$#", $username) || !preg_match("#^[a-zA-Z0-9]+$#", $password))) {
         echo "<em>Usernames and passwords can only contain letters and numbers</em>";
-    } else if ($username !="" && $password != "") {
-        echo "<em>Incorrect username or password</em>";
     }
 }
 

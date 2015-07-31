@@ -9,17 +9,21 @@
     <input type="submit" name="submit" value="Create Account" style="width: 250px"><br>
 </form>
 
+
+<br><br>
+
+<a href="login.php">Click here</a> to return to the login page.
+
 <br><br>
 
 <?php
-session_start(); //required here because this page does not use "include checkLogin.php";
-
 include "checkDatabase.php";
 
 if(isset($_POST["submit"])) {
     $username = $_POST["username"];
     $password = $_POST["password"];
 
+    //if the username or password are blank
     if($username == "") {
         echo "<em>Please enter a username</em><br>";
     }
@@ -27,16 +31,20 @@ if(isset($_POST["submit"])) {
         echo "<em>Please enter a password</em><br>";
     }
 
-    //login (with security)
+    //if the username and password have values and no illegal characters, check login database
     if($username !="" && $password != "" && preg_match("#^[a-zA-Z0-9]+$#", $username) && preg_match("#^[a-zA-Z0-9]+$#", $password)) {
-        //check if username and password already exists
+
+        //check username against database
         $check = $db->prepare("SELECT * FROM user_logins WHERE username=?");
         $check->bind_param("s", $username);
         $check->execute();
-        $check->store_result(); //stores value of executed statement
+        //stores value of executed statement and enables num_rows method to be used
+        $check->store_result();
         $rows = $check->num_rows;
+        //if there is a returned row then the username already exists, so don't permit it to be used
         if($rows == 1) {
             echo "<em>That username already exists</em>";
+        //else if there is no returned value, then the username doesn't exist, so permit it to be used
         } else {
             $insert = $db->prepare("INSERT INTO user_logins (username, password) VALUES (?,?)");
             $insert->bind_param("ss", $username, $password);
@@ -44,6 +52,7 @@ if(isset($_POST["submit"])) {
             $_SESSION["user"] = $username;
             header("location: profile.php");
         }
+    //else if username and password are entered but contain illegal characters
     } else if ($username !="" && $password != "" && (!preg_match("#^[a-zA-Z0-9]+$#", $username) || !preg_match("#^[a-zA-Z0-9]+$#", $password))) {
         echo "<em>Usernames and passwords can only contain letters and numbers</em>";
     }

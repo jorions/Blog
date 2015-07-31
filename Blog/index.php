@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 
 <?php
-include "checkLogin.php";
 include "checkDatabase.php";
-include "checkLogout.php";
-include "checkProfile.php";
 ?>
 
 <html>

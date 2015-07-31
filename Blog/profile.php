@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 
 <?php
-include "checkLogin.php";
 include "checkDatabase.php";
-include "checkLogout.php";
-include "checkIndex.php";
 ?>
 
 <html>
@@ -23,7 +20,8 @@ $userPosts->bind_param("s", $_SESSION["user"]);
 $userPosts->execute();
 
 //changes the state of the userPosts object so that we can run the fetch() method. can be though of similarly to
-//bind_param changing the state of an object so that we can run the execute() method.
+//bind_param changing the state of an object so that we can run the execute() method. The order of the variables binded
+//here are tied to the same order of the columns pulled in using the above prepare() statement
 $userPosts->bind_result($title, $author, $date, $contents, $id);
 
 //changes the state of the userPosts object so that we can run the num_rows method
@@ -36,7 +34,7 @@ if($numRows > 0) {
 
     <table style="text-align: left">
         <tr>
-            <th><strong>Title</strong></th>
+            <th>Title</th>
             <th>Author</th>
             <th>Date</th>
             <th>Post</th>
@@ -44,6 +42,13 @@ if($numRows > 0) {
             <th>Delete</th>
         </tr>
         <?php
+            //fetch() cannot be used without the bind_result() function used above
+            //it simultaneously...
+            //  pulls in a row of information from the userPosts object that was prepared by bind_result()
+            //  stores its current position in the list of rows
+            //  returns true (or 1?) while it still has information to return
+            //so this loop permits us to call the variables defined in bind_result(), 1 row at a time, and
+            //tells the loop to stop once there are no more rows to grab
             while($userPosts->fetch()) { ?>
                 <tr>
                     <td><?php echo $title; ?></td>
@@ -51,13 +56,17 @@ if($numRows > 0) {
                     <td><?php echo $date; ?></td>
                     <td>
                         <?php
+                        //if the post is longer than 60 characters return the first 50 characters
                         if(strlen($contents) > 60)
                             echo substr($contents, 0, 50) . "...";
+                        //else return the whole post
                         else
                             echo $contents;
                         ?>
                     </td>
+                    <!--Link to view the post-->
                     <td><a href="viewPost.php?id=<?php echo $id; ?>">View</a></td>
+                    <!--Link to delete the post-->
                     <td>DELETE POST</td>
                 </tr> <?php
             }
