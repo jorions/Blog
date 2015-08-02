@@ -5,13 +5,14 @@ include "checkDatabase.php";
 ?>
 
 <html>
-    <head>
-        <title><?php echo $_SESSION["user"]; ?>'s Newest Blog Post</title>
-    </head>
+<head>
+    <title><?php echo $_SESSION["user"]; ?>'s Newest Blog Post</title>
+</head>
 </html>
 
 <?php
 if(isset($_POST["submit"])) {
+    //set session variables to equal submitted form entries to preserve full entry in case of error
     $_SESSION["blogTitle"] = $_POST["title"];
     $_SESSION["blogContents"] = $_POST["contents"];
 
@@ -36,12 +37,12 @@ if(isset($_POST["submit"])) {
 <h2>Create a new blog post </h2>
 
 <form action="createPost.php" method="POST">
-    Enter your title here<br>
+    <strong>Title:</strong><br>
     <input type="text" name="title" value="<?php echo $_SESSION["blogTitle"]; ?>" style="width: 500px">
     <br>
     <br>
-    Enter your blog post here<br>
+    <strong>Post:</strong><br>
     <textarea name="contents" cols="70" rows="20"><?php echo $_SESSION["blogContents"]; ?></textarea>
     <br>
-    <input type="submit" name="submit" value="Click here to submit your post">
+    <input type="submit" name="submit" value="Submit post">
 </form>

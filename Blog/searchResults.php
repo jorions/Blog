@@ -12,15 +12,38 @@ include "checkDatabase.php";
 
 echo "<h2>Search Results</h2>";
 
-if(isset($_GET["query"])) {
-    $query = $db->prepare("SELECT title, author, date, contents, id FROM posts WHERE contents LIKE ?");
-    $search = "%" . $_GET["query"] . "%";
-    $query->bind_param("s", $search);
+//if there is a search query
+if(isset($_GET["query"]) && isset($_GET["searchParam"])) {
+    //if "everywhere" radio button was clicked, prepare SELECT statement
+    if($_GET["searchParam"] == "everywhere") {
+        $query = $db->prepare("SELECT title, author, date, contents, id FROM posts WHERE title LIKE ? OR author LIKE ? or contents LIKE ?");
+        $search = "%" . $_GET["query"] . "%";
+        $query->bind_param("sss", $search, $search, $search);
+    }
+    //if "titles" radio button was clicked, prepare SELECT statement
+    if($_GET["searchParam"] == "titles") {
+        $query = $db->prepare("SELECT title, author, date, contents, id FROM posts WHERE title LIKE ?");
+        $search = "%" . $_GET["query"] . "%";
+        $query->bind_param("s", $search);
+    }
+    //if "authors" radio button was clicked, prepare SELECT statement
+    if($_GET["searchParam"] == "authors") {
+        $query = $db->prepare("SELECT title, author, date, contents, id FROM posts WHERE author LIKE ?");
+        $search = "%" . $_GET["query"] . "%";
+        $query->bind_param("s", $search);
+    }
+    //if "contents" radio button was clicked, prepare SELECT statement
+    if($_GET["searchParam"] == "contents") {
+        $query = $db->prepare("SELECT title, author, date, contents, id FROM posts WHERE contents LIKE ?");
+        $search = "%" . $_GET["query"] . "%";
+        $query->bind_param("s", $search);
+    }
     $query->execute();
     $query->bind_result($title, $author, $date, $contents, $id);
     $query->store_result();
     $numRows = $query->num_rows;
 
+    //if there are results from SELECT statement, return table
     if($numRows > 0) {
     ?>
         <table style="text-align: left">
@@ -51,11 +74,19 @@ if(isset($_GET["query"])) {
                     </tr>
                 <?php
                 }
+    //else if no results from search
+    } else {
+        if($_GET["searchParam"] == "everywhere") {
+            echo "<h3>No blog titles, authors, or contents contain <em>'" . $_GET["query"] . "'</em></h3>";
+        } else {
+            echo "<h3>No blog " . $_GET["searchParam"] . " contain <em>'" . $_GET["query"] . "'</em></h3>";
         }
+    }
             ?>
         </table>
     <?php
+//else if there is no query
 } else {
-    echo "<h2>No query entered!</h2>";
+    echo "<h3>No query entered!</h3>";
 }
 ?>

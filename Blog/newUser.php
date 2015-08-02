@@ -1,5 +1,11 @@
 <!DOCTYPE html>
 
+<html>
+<head>
+    <title>Set Up New Account</title>
+</head>
+</html>
+
 <h2>Create a new account</h2>
 
 <form action="newUser.php" method="POST">

@@ -1,5 +1,11 @@
 <!DOCTYPE html>
 
+<html>
+<head>
+    <title>No Login</title>
+</head>
+</html>
+
 <?php
 include "checkDatabase.php";
 

@@ -5,20 +5,17 @@ include "checkDatabase.php";
 ?>
 
 <html>
-    <head>
-        <title>All of our blogs</title>
-    </head>
+<head>
+    <title>All of our blogs</title>
+</head>
 </html>
 
 <?php
-if(isset($_POST["createPost"])) {
-    header("location: createPost.php");
-}
 
 //if post was just uploaded to this page provide message letting you know that your blog was posted
 if(isset($_SESSION["blogTitle"])) {
     if($_SESSION["blogTitle"] != "") { //necessary because if you move from createPost to here without creating a post $_SESSION["blogTitle"] is set to ""
-        echo "<h3 style='color:blue'>Your post $_SESSION[blogTitle] was successfuly uploaded!</h3>";
+        echo "<h3 style='color:blue'>Your post $_SESSION[blogTitle] was successfully uploaded!</h3>";
         unset($_SESSION["blogTitle"]);
         unset($_SESSION["blogContents"]);
     }
@@ -26,21 +23,17 @@ if(isset($_SESSION["blogTitle"])) {
 
 ?>
 
-<h2>Here are all of the blogs that have been posted</h2>
-
-<form action=index.php method="POST">
-    <input type="submit" name="createPost" value="Click here to create a blog post">
-</form>
+<h2>All Blogs</h2>
 
 <br>
 
-<table style="text-align: left">
+<table cellpadding="10" style="text-align: left">
     <tr>
         <th><strong>Title</strong></th>
         <th>Author</th>
         <th>Date</th>
         <th>Post</th>
-        <th>View Post</th>
+        <th>View</th>
     </tr>
     <?php
     $allPosts = $db->query("SELECT * FROM posts");

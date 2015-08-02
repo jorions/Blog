@@ -10,6 +10,41 @@ include "checkDatabase.php";
     </head>
 </html>
 
+<?php
+//if a post was edited, run this code
+if(isset($_SESSION["blogTitle"])) {
+    //moving straight from createPost to here creates an empty blogTitle SESSION variable, so check for it
+    if($_SESSION["blogTitle"] != "") {
+        echo "<h3 style='color:blue'>Your post $_SESSION[blogTitle] was successfully updated!</h3>";
+    }
+    unset($_SESSION["blogTitle"]);
+}
+
+//if a post was deleted, run this code
+//QUESTION - THIS IS PROBABLY HORRENDOUSLY INSECURE. WHAT IS THE BEST OPTION??
+if(isset($_GET["deleteID"])) {
+    //QUESTION - WHY DO I HAVE TO EXECUTE AND CLOSE MY STATEMENTS BEFORE MOVING ON TO NEW STATEMENTS? I DON'T HAVE TO DO THIS ON EDITPOST.PHP
+    $select = $db->prepare("SELECT title FROM posts WHERE id = ?");
+    $select->bind_param("i", $_GET["deleteID"]);
+    $select->execute();
+    $select->bind_result($deleteTitle);
+    $select->fetch();
+    $select->close();
+
+    $delete = $db->prepare("DELETE FROM posts WHERE id = ?");
+    $delete->bind_param("i", $_GET["deleteID"]);
+    $delete->execute();
+    $delete->store_result();
+    $rows = $delete->num_rows;
+
+    if($rows > 0) {
+        echo "<h3 style='color:blue'>Your post $deleteTitle was successfully deleted!</h3>";
+    }
+
+    $delete->close();
+}
+?>
+
 <h2><strong><?php echo $_SESSION["user"]; ?></strong>'s Profile Page</h2>
 <br>
 <h3>All of <strong><?php echo $_SESSION["user"]; ?></strong>'s posts</h3>
@@ -32,14 +67,15 @@ $numRows = $userPosts->num_rows;
 if($numRows > 0) {
 ?>
 
-    <table style="text-align: left">
+    <table cellpadding="10" style="text-align: left">
         <tr>
             <th>Title</th>
             <th>Author</th>
             <th>Date</th>
             <th>Post</th>
-            <th>View Post</th>
+            <th>View</th>
             <th>Delete</th>
+            <th>Edit</th>
         </tr>
         <?php
             //fetch() cannot be used without the bind_result() function used above
@@ -67,7 +103,9 @@ if($numRows > 0) {
                     <!--Link to view the post-->
                     <td><a href="viewPost.php?id=<?php echo $id; ?>">View</a></td>
                     <!--Link to delete the post-->
-                    <td>DELETE POST</td>
+                    <td><a href="profile.php?deleteID=<?php echo $id; ?>">Delete</a></td>
+                    <!--Link to edit the post-->
+                    <td><a href="editPost.php?id=<?php echo $id; ?>">Edit</a></td>
                 </tr> <?php
             }
         ?>
