@@ -58,7 +58,7 @@ if(isset($_GET["query"]) && isset($_GET["searchParam"])) {
                 while($query->fetch()) { ?>
                     <tr>
                         <td><?php echo $title; ?></td>
-                        <td><?php echo $author; ?></td>
+                        <td><a href="viewUser.php?name=<?php echo $author; ?>"><?php echo $author; ?></a></td>
                         <td><?php echo $date; ?></td>
                         <td>
                             <?php
