@@ -40,6 +40,7 @@ if(isset($_GET["id"])) {
                 $update->execute();
 
                 //redirect to profile page
+                $_SESSION["postEdited"] = "TRUE";
                 header("location: profile.php");
 
             //else if either title or contents are blank

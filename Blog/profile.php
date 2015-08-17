@@ -12,12 +12,15 @@ include "checkDatabase.php";
 
 <?php
 //if a post was edited, run this code
-if(isset($_SESSION["blogTitle"])) {
-    //moving straight from createPost to here creates an empty blogTitle SESSION variable, so check for it
-    if($_SESSION["blogTitle"] != "") {
-        echo "<h3 style='color:blue'>Your post '$_SESSION[blogTitle]' was successfully updated!</h3>";
-    }
-    unset($_SESSION["blogTitle"]);
+if(isset($_SESSION["postEdited"])) {
+    echo "<h3 style='color:blue'>Your post '$_SESSION[blogTitle]' was successfully updated!</h3>";
+    unset($_SESSION["postEdited"]);
+}
+
+//if profile info was updated, run this code
+if(isset($_SESSION["newProfileInfo"])) {
+    echo "<h3 style='color:blue'>Your profile was successfully updated!</h3>";
+    unset($_SESSION["newProfileInfo"]);
 }
 
 //if a post was selected for deletion, run this code
@@ -47,13 +50,6 @@ if(isset($_GET["deleteID"])) {
     }
 
 }
-
-//if profile info was updated, run this code
-if(isset($_SESSION["newProfileInfo"])) {
-    echo "<h3 style='color:blue'>Your profile was successfully updated!</h3>";
-    unset($_SESSION["newProfileInfo"]);
-}
-
 ?>
 
 <h2><strong><?php echo $_SESSION["user"]; ?></strong>'s Profile Page</h2>
