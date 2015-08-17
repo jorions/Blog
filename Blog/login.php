@@ -8,10 +8,10 @@
 
 <h2>Login</h2>
 <form action="login.php" method="POST">
-    Enter your username: <input type="text" name="username" value=""><br>
-    Enter your password: <input type="text" name="password" value=""><br>
+    <input type="text" name="username" placeholder="username" maxlength="25"><br>
+    <input type="password" name="password" placeholder="password" maxlength="25"><br>
     <br>
-    <input type="submit" name="submit" value="Login" style="width: 300px"><br>
+    <input type="submit" name="submit" value="Login" style="width: 130px"><br>
     <br><br>
     If you dont have an account <a href="newUser.php">click here</a>
 </form>
@@ -27,10 +27,10 @@ if(isset($_POST["submit"])) {
 
     //if username or password are blank
     if($username == "") {
-        echo "<em>Please enter a username</em><br>";
+        echo "<h3 style='color:blue'>Please enter a username</h3>";
     }
     if($password == "") {
-        echo "<em>Please enter a password</em><br>";
+        echo "<h3 style='color:blue'>Please enter a password</h3>";
     }
 
     //if the username and password have values and no illegal characters, check login database
@@ -46,14 +46,15 @@ if(isset($_POST["submit"])) {
         //if there is a returned row then the password and username are correct, so login
         if($rows == 1) {
             $_SESSION["user"] = $username;
+            $_SESSION["password"] = $password;
             header("location: profile.php");
         //else if there is no returned value, then the password or username is incorrect
         } else {
-            echo "<em>Incorrect username or password</em>";
+            echo "<h3 style='color:blue'>Incorrect username or password</h3>";
         }
     //else if username and password are entered but contain illegal characters
     } else if ($username !="" && $password != "" && (!preg_match("#^[a-zA-Z0-9]+$#", $username) || !preg_match("#^[a-zA-Z0-9]+$#", $password))) {
-        echo "<em>Usernames and passwords can only contain letters and numbers</em>";
+        echo "<h3 style='color:blue'>Usernames and passwords can only contain letters and numbers</h3>";
     }
 }
 

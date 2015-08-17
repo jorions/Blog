@@ -12,8 +12,9 @@ include "checkDatabase.php";
 
 //if a post to edit has been clicked, prepare and execute a SELECT statement based on the id
 if(isset($_GET["id"])) {
-    $post = $db->prepare("SELECT title, date, contents FROM posts WHERE id = ?");
-    $post->bind_param("i", $_GET["id"]);
+    //check for both author and id for security purposes
+    $post = $db->prepare("SELECT title, date, contents FROM posts WHERE id = ? AND author = ?");
+    $post->bind_param("is", $_GET["id"], $_SESSION["user"]);
     $post->execute();
     $post->bind_result($title, $date, $contents);
     $post->store_result();
@@ -57,7 +58,7 @@ if(isset($_GET["id"])) {
         <form action="editPost.php?id=<?php echo $_GET["id"]; ?>" method="POST">
             <em>Post originally made on <?php echo $date; ?></em><br><br>
             <strong>Title:</strong><br>
-            <input type="text" name="title" value="<?php echo $_SESSION["blogTitle"]; ?>" style="width: 500px">
+            <input type="text" name="title" maxlength="50" value="<?php echo $_SESSION["blogTitle"]; ?>" style="width: 500px">
             <br>
             <br>
             <strong>Post:</strong><br>
@@ -69,7 +70,7 @@ if(isset($_GET["id"])) {
 
     //else if the SELECT statement does not return a row
     } else {
-            echo "<h2>No post selected to edit</h2>";
+            echo "<h2>That isn't your post to edit! For shame!</h2>";
     }
 
 //else if the GET id is not set

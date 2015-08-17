@@ -22,10 +22,10 @@ if(isset($_GET["id"])) {
         </html>
 
         <h2><?php echo $title; ?></h2>
-        <h4><?php echo "Posted by " . $author . " on " . $date; ?></h4>
+        <h4><?php echo "Posted by <a href='viewUser.php?name=$author'>$author</a> on $date"; ?></h4>
         <br>
         <br>
-        <?php echo $contents;
+        <?php echo str_replace("\n","<br>",$contents);
     } else { ?>
 
         <html>

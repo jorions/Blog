@@ -6,18 +6,18 @@ include "checkDatabase.php";
 
 <html>
 <head>
-    <title>All of our blogs</title>
+    <title>All Blogs</title>
 </head>
 </html>
 
 <?php
 
 //if post was just uploaded to this page provide message letting you know that your blog was posted
-if(isset($_SESSION["blogTitle"])) {
-    if($_SESSION["blogTitle"] != "") { //necessary because if you move from createPost to here without creating a post $_SESSION["blogTitle"] is set to ""
-        echo "<h3 style='color:blue'>Your post $_SESSION[blogTitle] was successfully uploaded!</h3>";
-        unset($_SESSION["blogTitle"]);
-        unset($_SESSION["blogContents"]);
+if(isset($_SESSION["newBlogTitle"])) {
+    if($_SESSION["newBlogTitle"] != "" && $_SESSION["newBlogContents"] != "") { //necessary because if you move from createPost to here without creating a post SESSION variables are set to ""
+        echo "<h3 style='color:blue'>Your post '$_SESSION[newBlogTitle]' was successfully uploaded!</h3>";
+        unset($_SESSION["newBlogTitle"]);
+        unset($_SESSION["newBlogContents"]);
     }
 }
 
@@ -41,7 +41,7 @@ if(isset($_SESSION["blogTitle"])) {
         foreach($allPosts as $row) { ?>
             <tr>
                 <td><?php echo $row["title"]; ?></td>
-                <td><?php echo $row["author"]; ?></td>
+                <td><a href="viewUser.php?name=<?php echo $row["author"]; ?>"><?php echo $row["author"]; ?></a></td>
                 <td><?php echo $row["date"]; ?></td>
                 <td>
                     <?php

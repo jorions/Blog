@@ -15,49 +15,66 @@ include "checkDatabase.php";
 if(isset($_SESSION["blogTitle"])) {
     //moving straight from createPost to here creates an empty blogTitle SESSION variable, so check for it
     if($_SESSION["blogTitle"] != "") {
-        echo "<h3 style='color:blue'>Your post $_SESSION[blogTitle] was successfully updated!</h3>";
+        echo "<h3 style='color:blue'>Your post '$_SESSION[blogTitle]' was successfully updated!</h3>";
     }
     unset($_SESSION["blogTitle"]);
 }
 
-//if a post was deleted, run this code
-//QUESTION - THIS IS PROBABLY HORRENDOUSLY INSECURE. WHAT IS THE BEST OPTION??
+//if a post was selected for deletion, run this code
 if(isset($_GET["deleteID"])) {
     //QUESTION - WHY DO I HAVE TO EXECUTE AND CLOSE MY STATEMENTS BEFORE MOVING ON TO NEW STATEMENTS? I DON'T HAVE TO DO THIS ON EDITPOST.PHP
-    $select = $db->prepare("SELECT title FROM posts WHERE id = ?");
-    $select->bind_param("i", $_GET["deleteID"]);
+    //ANSWER - ONLY SELECT STATEMENTS NEED TO BE CLOSED BECAUSE YOU ARE CLEARING THE RETURNED DATA FROM MEMORY. MATT THINKS THE EDITPOST.PHP
+    //         PAGE WORKS BECAUSE IT USES STORE_RESULT WHICH HE THINKS MIGHT CHANGE ITS MEMORY LOCATION (I HAVE SINCE ADDED STORE_RESULT HERE TOO)
+    $select = $db->prepare("SELECT title, author FROM posts WHERE id = ? AND author = ?");
+    $select->bind_param("is", $_GET["deleteID"], $_SESSION["user"]);
     $select->execute();
-    $select->bind_result($deleteTitle);
+    $select->bind_result($deleteTitle, $deleteAuthor);
+    $select->store_result();
+    $rows = $select->num_rows;
     $select->fetch();
     $select->close();
 
-    $delete = $db->prepare("DELETE FROM posts WHERE id = ?");
-    $delete->bind_param("i", $_GET["deleteID"]);
-    $delete->execute();
-    $delete->store_result();
-    $rows = $delete->num_rows;
-
+    //if the above select statement returns a row, the id entered was valid
     if($rows > 0) {
+        $delete = $db->prepare("DELETE FROM posts WHERE id = ?");
+        $delete->bind_param("i", $_GET["deleteID"]);
+        $delete->execute();
+        $delete->close();
         echo "<h3 style='color:blue'>Your post $deleteTitle was successfully deleted!</h3>";
+    //else if the above select statement returns nothing, then the id entered was invalid
+    } else {
+        echo "<h3 style='color:blue'>That isn't your post to delete! For shame!</h3>";
     }
 
-    $delete->close();
 }
+
+//if profile info was updated, run this code
+if(isset($_SESSION["newProfileInfo"])) {
+    echo "<h3 style='color:blue'>Your profile was successfully updated!</h3>";
+    unset($_SESSION["newProfileInfo"]);
+}
+
 ?>
 
 <h2><strong><?php echo $_SESSION["user"]; ?></strong>'s Profile Page</h2>
-<br>
+
+<form action="updateProfile.php" method="POST">
+    <input type="submit" name="updateAccount" value="Update account info">
+</form>
+
+<br />
+
 <h3>All of <strong><?php echo $_SESSION["user"]; ?></strong>'s posts</h3>
 
 <?php
-$userPosts = $db->prepare("SELECT title, author, date, contents, id FROM posts WHERE author = ?");
+$userPosts = $db->prepare("SELECT title, date, contents, id FROM posts WHERE author = ?");
 $userPosts->bind_param("s", $_SESSION["user"]);
 $userPosts->execute();
 
 //changes the state of the userPosts object so that we can run the fetch() method. can be though of similarly to
 //bind_param changing the state of an object so that we can run the execute() method. The order of the variables binded
 //here are tied to the same order of the columns pulled in using the above prepare() statement
-$userPosts->bind_result($title, $author, $date, $contents, $id);
+$userPosts->bind_result($title, $date, $contents, $id);
 
 //changes the state of the userPosts object so that we can run the num_rows method
 $userPosts->store_result();
@@ -70,7 +87,6 @@ if($numRows > 0) {
     <table cellpadding="10" style="text-align: left">
         <tr>
             <th>Title</th>
-            <th>Author</th>
             <th>Date</th>
             <th>Post</th>
             <th>View</th>
@@ -88,7 +104,6 @@ if($numRows > 0) {
             while($userPosts->fetch()) { ?>
                 <tr>
                     <td><?php echo $title; ?></td>
-                    <td><?php echo $author; ?></td>
                     <td><?php echo $date; ?></td>
                     <td>
                         <?php

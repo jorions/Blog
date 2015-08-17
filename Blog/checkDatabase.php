@@ -16,8 +16,8 @@ session_start();
 //get name of current page for use on other pages
 $currentPage = $_SERVER["PHP_SELF"];
 
-//if not on the login page or noLogin, check if user is logged in
-if($currentPage != "/Blog/login.php" && $currentPage != "/Blog/noLogin.php") {
+//if not on the login, noLogin, or newUser page, check if user is logged in
+if($currentPage != "/Blog/login.php" && $currentPage != "/Blog/noLogin.php" && $currentPage != "/Blog/newUser.php") {
     if(!isset($_SESSION["user"])) {
         header("location: noLogin.php");
     }
@@ -39,6 +39,11 @@ if(isset($_POST["goToIndex"])) {
     header("location: index.php");
 }
 
+//check if users button is pressed
+if(isset($_POST["goToUsers"])) {
+    header("location: allUsers.php");
+}
+
 //check if profile button is pressed
 if(isset($_POST["goToProfile"])) {
     header("location: profile.php");
@@ -50,22 +55,24 @@ if($currentPage != "/Blog/login.php" && $currentPage != "/Blog/noLogin.php" && $
     <form action="checkDatabase.php" method="POST">
         <input type="submit" name="logout" value="Log out">
         <input type="submit" name="createPost" value="Create post">
-        <input type="submit" name="goToIndex" value="View all blogs">
-        <input type="submit" name="goToProfile" value="View your profile">
+        <input type="submit" name="goToIndex" value="All blogs">
+        <input type="submit" name="goToUsers" value="All users">
+        <input type="submit" name="goToProfile" value="Your profile">
         <br>
     </form>
-    <br>
+    <hr />
     <form action="searchResults.php" method="GET">
-        <input type="text" name="query" value="Enter search">
+        <input type="search" name="query" placeholder="Enter search">
         <input type="submit" name="goToSearch" value="Search">
-        <br>
+        <br />
+        <br />
         <!--Creating the radio buttons all with the same name prevents multiple radio buttons from being checked at once -->
         Everwhere <input type="radio" name="searchParam" value="everywhere" checked>
         Authors <input type="radio" name="searchParam" value="authors">
         Titles <input type="radio" name="searchParam" value="titles">
         Contents <input type="radio" name="searchParam" value="contents">
     </form>
-    <br>
+    <hr />
     <?php
 }
 ?>
