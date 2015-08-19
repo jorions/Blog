@@ -19,7 +19,7 @@ if(isset($_POST["submit"])) {
     if($_POST["title"] != "" && $_POST["contents"] != "") {
         //add post to database
         $insert = $db->prepare("INSERT INTO posts (title, author, date, contents) VALUES (?, ?, ?, ?)");
-        $date = date("d F Y");
+        $date = date("M j, Y");
         $insert->bind_param("ssss", $_SESSION["blogTitle"], $_SESSION["user"], $date, $_SESSION["blogContents"]);
         $insert->execute();
 
